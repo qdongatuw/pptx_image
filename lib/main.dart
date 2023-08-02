@@ -21,7 +21,13 @@ class CircularContainer extends StatefulWidget {
 }
 
 class _CircularContainerState extends State<CircularContainer> {
-  Color _currentColor = Colors.greenAccent;
+  late Color _currentColor;
+
+  @override
+  void initState() {
+    super.initState();
+  _currentColor = widget.color.withOpacity(0.5);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +44,19 @@ class _CircularContainerState extends State<CircularContainer> {
         });
         widget.onTapUp();
       },
+      onTapCancel: () {
+        setState(() {
+          _currentColor = widget.color.withOpacity(0.5);
+        });
+        widget.onTapUp();
+      },
       child: Container(
         width: widget.radius * 2,
         height: widget.radius * 2,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: _currentColor,
+          // color: _currentColor,
+          gradient: RadialGradient(colors: [_currentColor, Colors.transparent])
         ),
         child: Center(child: Text(widget.name),)
       ),
@@ -77,6 +90,7 @@ class _HomePageState extends State<HomePage> {
   void _startTimer(int index) {
     setState(() {
       _stopwatches[index].start();
+      _log.add('Button ${index + 1} ...');
     });
   }
 
@@ -85,6 +99,7 @@ class _HomePageState extends State<HomePage> {
       _stopwatches[index].stop();
       _buttonTimes[index] = _stopwatches[index].elapsed.inMilliseconds.toString();
       _stopwatches[index].reset();
+      _log.removeLast();
       _log.add('Button ${index + 1} Time: ${_buttonTimes[index]} ms');
     });
   }
@@ -113,7 +128,8 @@ class _HomePageState extends State<HomePage> {
                 for (int i = 0; i < 3; i++)
                   CircularContainer(
           onTapDown: (){_startTimer(i);},
-          onTapUp: (){_stopTimer(i);} ,
+          onTapUp: (){_stopTimer(i);},
+          
           name: ('Button ${i + 1}'), color: Colors.greenAccent, radius: 50,
         ),
                   
