@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Timer App'),
+        title: const Text('Timer App by Q. Dong'),
       ),
       body: Row(
         children: [
