@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+List actions = [
+  ['leg', Colors.green],
+  ['face', Colors.blue],
+  ['foot', Colors.red],
+  ['hand', Colors.orange]
+];
+
+
 
 class CircularContainer extends StatefulWidget {
   final double radius;
@@ -56,9 +64,9 @@ class _CircularContainerState extends State<CircularContainer> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           // color: _currentColor,
-          gradient: RadialGradient(colors: [_currentColor, Colors.transparent])
+          gradient: RadialGradient(colors: [_currentColor, Colors.white])
         ),
-        child: Center(child: Text(widget.name),)
+        child: Center(child: Text(widget.name, style: TextStyle(color: widget.color, fontWeight: FontWeight.bold, fontSize: 16),),)
       ),
     );
   }
@@ -84,13 +92,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Stopwatch> _stopwatches = [];
   List<String> _buttonTimes = [];
-  List<String> _log = [];
+  List<List> _log = [];
 
 
   void _startTimer(int index) {
     setState(() {
       _stopwatches[index].start();
-      _log.add('Button ${index + 1} ...');
+      _log.add(['${actions[index][0]} ...', actions[index][1]]);
     });
   }
 
@@ -100,14 +108,14 @@ class _HomePageState extends State<HomePage> {
       _buttonTimes[index] = _stopwatches[index].elapsed.inMilliseconds.toString();
       _stopwatches[index].reset();
       _log.removeLast();
-      _log.add('Button ${index + 1} Time: ${_buttonTimes[index]} ms');
+      _log.add(['${actions[index][0]} duration: ${_buttonTimes[index]} ms', actions[index][1]]);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < actions.length; i++) {
       _stopwatches.add(Stopwatch());
       _buttonTimes.add('0');
     }
@@ -125,12 +133,12 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < actions.length; i++)
                   CircularContainer(
           onTapDown: (){_startTimer(i);},
           onTapUp: (){_stopTimer(i);},
           
-          name: ('Button ${i + 1}'), color: Colors.greenAccent, radius: 50,
+          name: (actions[i][0]), color: actions[i][1], radius: 70,
         ),
                   
               ],
@@ -143,8 +151,9 @@ class _HomePageState extends State<HomePage> {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    _log[index],
-                    style: const TextStyle(fontSize: 12),
+                    _log[index][0],
+                    style: TextStyle(fontSize: 14,
+                    color: _log[index][1]),
                   ),
                 );
               },
