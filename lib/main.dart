@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 List actions = [
-  ['leg', Colors.green],
-  ['face', Colors.blue],
-  ['foot', Colors.red],
-  ['hand', Colors.orange]
+  ['Paw Licking', Colors.green],
+  ['Nose/Face Washing', Colors.blue],
+  ['Body Grooming', Colors.red],
+  ['Leg Licking', Colors.orange],
+  ['Tail/Genitals Grooming', Colors.purple],
+  ['Other', Colors.indigo]
 ];
 
 
@@ -59,14 +61,18 @@ class _CircularContainerState extends State<CircularContainer> {
         widget.onTapUp();
       },
       child: Container(
-        width: widget.radius * 2,
-        height: widget.radius * 2,
+        width: widget.radius * 4,
+        height: widget.radius,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          // shape: BoxShape.circle,
           // color: _currentColor,
-          gradient: RadialGradient(colors: [_currentColor, Colors.white])
+          borderRadius: BorderRadius.circular(50),
+          gradient: LinearGradient(colors: [_currentColor, Colors.white, _currentColor])
         ),
-        child: Center(child: Text(widget.name, style: TextStyle(color: widget.color, fontWeight: FontWeight.bold, fontSize: 16),),)
+        child: Center(
+          
+          child: Text(widget.name, style: TextStyle(color: widget.color, fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.center,),
+          )
       ),
     );
   }
@@ -138,7 +144,7 @@ class _HomePageState extends State<HomePage> {
           onTapDown: (){_startTimer(i);},
           onTapUp: (){_stopTimer(i);},
           
-          name: (actions[i][0]), color: actions[i][1], radius: 70,
+          name: (actions[i][0]), color: actions[i][1], radius: 50,
         ),
                   
               ],
