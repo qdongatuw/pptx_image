@@ -18,7 +18,7 @@ class CircularContainer extends StatefulWidget {
   final VoidCallback onTapUp;
   final String name;
 
-  CircularContainer({
+  const CircularContainer({super.key, 
     required this.radius,
     required this.color,
     required this.onTapDown,
@@ -86,6 +86,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: HomePage(),
+      theme: ThemeData.dark(),
     );
   }
 }
