@@ -1,15 +1,12 @@
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
+import 'package:csv/csv.dart';
+import 'dart:io';
 
-List actions = [
-  ['Paw Licking', Colors.green],
-  ['Nose/Face Washing', Colors.blue],
-  ['Body Grooming', Colors.red],
-  ['Leg Licking', Colors.orange],
-  ['Tail/Genitals Grooming', Colors.purple],
-  ['Other', Colors.indigo]
-];
+List<Color> colors = [Colors.green, Colors.blue, Colors.red, Colors.orange, Colors.purple, Colors.indigo];
 
-
+List<String> actions = ['Paw Licking','Nose/Face Washing', 'Body Grooming','Leg Licking', 'Tail/Genitals Grooming', 'Other'];
 
 class CircularContainer extends StatefulWidget {
   final double radius;
@@ -71,7 +68,9 @@ class _CircularContainerState extends State<CircularContainer> {
         ),
         child: Center(
           
-          child: Text(widget.name, style: TextStyle(color: widget.color, fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.center,),
+          child: Text(widget.name, 
+          style: GoogleFonts.lato(textStyle: TextStyle(color: widget.color, fontWeight: FontWeight.bold, fontSize: 16)) , 
+          textAlign: TextAlign.center,),
           )
       ),
     );
@@ -98,24 +97,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Stopwatch> _stopwatches = [];
-  List<String> _buttonTimes = [];
+  List<int> _buttonTimes = [];
+  List<int> _buttonTotalTimes = [];
   List<List> _log = [];
 
 
   void _startTimer(int index) {
     setState(() {
       _stopwatches[index].start();
-      _log.add(['${actions[index][0]} ...', actions[index][1]]);
+      _log.add([index, 0]);
     });
   }
 
   void _stopTimer(int index) {
     setState(() {
       _stopwatches[index].stop();
-      _buttonTimes[index] = _stopwatches[index].elapsed.inMilliseconds.toString();
+      _buttonTimes[index] = _stopwatches[index].elapsed.inMilliseconds;
+      _buttonTotalTimes[index] += _buttonTimes[index];
       _stopwatches[index].reset();
       _log.removeLast();
-      _log.add(['${actions[index][0]} duration: ${_buttonTimes[index]} ms', actions[index][1]]);
+      _log.add([index, _buttonTimes[index]]);
     });
   }
 
@@ -124,7 +125,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     for (int i = 0; i < actions.length; i++) {
       _stopwatches.add(Stopwatch());
-      _buttonTimes.add('0');
+      _buttonTimes.add(0);
+      _buttonTotalTimes.add(0);
     }
   }
 
@@ -145,7 +147,7 @@ class _HomePageState extends State<HomePage> {
           onTapDown: (){_startTimer(i);},
           onTapUp: (){_stopTimer(i);},
           
-          name: (actions[i][0]), color: actions[i][1], radius: 50,
+          name: (actions[i]), color: colors[i], radius: 50,
         ),
                   
               ],
@@ -157,11 +159,17 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    _log[index][0],
-                    style: TextStyle(fontSize: 14,
-                    color: _log[index][1]),
-                  ),
+                  child: ListTile(
+                    tileColor: colors[_log[index][0]].withOpacity(0.5),
+                    titleTextStyle: TextStyle(fontSize: 14),
+                    title: Text(actions[_log[index][0]]).animate().fadeIn(), 
+                    subtitle: Text(_log[index][1] == 0? '.........': '${_log[index][1]} ms').animate().shake() ,
+                    )
+                  //  Text(
+                  //   _log[index][1] == 0? '${_log[index]][0]} ...': '${_log[index][0]} duration: ${_log[index][1]} ms',
+                  //   style: TextStyle(fontSize: 14,
+                  //   color: _log[index][1]),
+                  // ),
                 );
               },
             ),
@@ -176,6 +184,9 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               setState(() {
                 _log.clear();
+                for (int i=0; i<_buttonTotalTimes.length; i++){
+                    _buttonTotalTimes[i] = 0;
+                }
               });
             },
             child: const Icon(Icons.clear),
@@ -183,8 +194,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 16), 
           FloatingActionButton(
             tooltip: "Save the record",
-            onPressed: () {
-              // 处理第二个按钮的点击事件
+            onPressed: () async{
+              String csvData = const ListToCsvConverter().convert(_log);
+          File file = File('image_paths.csv');
+          await file.writeAsString(csvData);
+    //print('CSV file saved.');
             },
             child: const Icon(Icons.download),
           ),
