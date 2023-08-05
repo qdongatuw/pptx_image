@@ -157,13 +157,15 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: _log.length,
               itemBuilder: (context, index) {
+                final int reversedIndex = _log.length - 1 - index;
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    tileColor: colors[_log[index][0]].withOpacity(0.5),
-                    titleTextStyle: TextStyle(fontSize: 14),
-                    title: Text(actions[_log[index][0]]).animate().fadeIn(), 
-                    subtitle: Text(_log[index][1] == 0? '.........': '${_log[index][1]} ms').animate().shake() ,
+                    
+                    tileColor: colors[_log[reversedIndex][0]].withOpacity(0.5),
+                    titleTextStyle: const TextStyle(fontSize: 14),
+                    title: Text(actions[_log[reversedIndex][0]]).animate().fadeIn(), 
+                    subtitle: Text(_log[reversedIndex][1] == 0? '.........': '${_log[reversedIndex][1]} ms').animate().shake() ,
                     )
                   //  Text(
                   //   _log[index][1] == 0? '${_log[index]][0]} ...': '${_log[index][0]} duration: ${_log[index][1]} ms',
